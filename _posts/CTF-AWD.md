@@ -1,0 +1,244 @@
+---
+layout:     post
+title:      CTF-AWD 常用操作总结
+subtitle:   Linux系统攻防
+date:       2018-01-15
+author:     Yunlongs
+header-img: img/post-bg-ctf.jpg
+catalog: true
+tags:
+    - Linux
+    - CTF
+    - 运维安全
+---
+
+
+
+#CTF-AWD 常用操作总结   
+**这是近两年参加各类CTF比赛和自己收集整理以及借鉴他人博客的Linux系统攻防经验，各位经常使用Linux系统做运维的也可以参考借鉴。**
+
+## 常用基本指令
+
+    ssh <-p 端口> 用户名@IP　　
+    scp 文件路径  用户名@IP:存放路径　　　　
+    tar -zcvf web.tar.gz /var/www/html/　　　　
+    pkill -kill -t <用户tty>　　 　　
+    ps aux | grep pid或者进程名　　　　
+## 查看已建立的网络连接及进程
+`netstat -antulp | grep EST`
+## 查看指定端口被哪个进程占用
+`lsof -i:端口号 或者 netstat -tunlp|grep 端口号`
+## 结束进程命令
+
+    kill PID
+    killall <进程名>　　
+    kill - <PID>　　
+## 封杀某个IP或者ip段，如：
+    　
+    iptables -I INPUT -s . -j DROP
+    iptables -I INPUT -s ./ -j DROP
+
+## 备份mysql数据库
+    mysqldump -u 用户名 -p 密码 数据库名 > back.sql　　　　
+    mysqldump --all-databases > bak.sql　　　　　　
+## 还原mysql数据库
+    mysql -u 用户名 -p 密码 数据库名 < bak.sql　　　　
+## 检测所有的tcp连接数量及状态
+`netstat -ant|awk  |grep |sed -e  -e |sort|uniq -c|sort -rn`
+## 查看页面访问排名前十的IP
+`cat /var/log/apache2/access.log | cut -f1 -d   | sort | uniq -c | sort -k  -r | head -　　`
+## 查看页面访问排名前十的URL
+`cat /var/log/apache2/access.log | cut -f4 -d   | sort | uniq -c | sort -k  -r | head -　　`
+
+
+## 使用系统 chattr +i 命令
+    用chattr命令防止系统中某个关键文件被修改：
+    chattr +i /etc/profile
+    将/var/www/html目录下的文件设置为不允许任何人修改：
+    chattr -R +i /var/www/html
+
+## 目录监控
+`python -m pyinotify 监控目录路径`
+pyinotify是github上的一个库，可以自行搜索安装
+## 网络监控断异常连接
+**linux安全防护一定少不了 iptables了，使用iptables需要有管理员权限。对于比赛环境，我们完全可以配置一个近乎苛刻的配置防火墙策略。
+具体我们可以做哪些工作呢，举一些例子：**
+1. 关闭所有网络端口，只开放一些比赛的必要端口，也可以防止后门的连接
+1.1 开放ssh
+
+        iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+        iptables -A OUTPUT -p tcp --sport 22 -j ACCEPT
+
+    1.2 打开80端口
+
+        iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+        iptables -A OUTPUT -p tcp --sport 80 -j ACCEPT
+    1.3 开启多端口简单用法
+
+        iptables -A INPUT -p tcp -m multiport --dport 22,80,8080,8081 -j ACCEPT
+
+    1.4 允许外部访问本地多个端口 如8080，8081，8082,且只允许是新连接、已经连接的和已经连接的延伸出新连接的会话
+
+        iptables -A INPUT -p tcp -m multiport --dport 8080,8081,8082,12345 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+        iptables -A OUTPUT -p tcp -m multiport --sport 8080,8081,8082,12345 -m state --state ESTABLISHED -j ACCEPT
+
+2. 限制ssh登陆，进行访问控制
+
+        iptable -t filter -A INPUT -s 123.4.5.6 -p tcp --dport 22 -j DROP 　　//禁止从123.4.5.6远程登陆到本机
+        iptables -A INPUT -s 123.4.5.6/24 -p tcp --dport 22 -j ACCEPT　　//允许123.4.5.6网段远程登陆访问ssh
+
+3. 限制IP连接数和连接速率
+我们可以限制IP的网络连接数和速度等，限制过快的连接频率，这样可以在一定程度上限制对方的扫描器。狠一点的话，甚至可以让对方只能以手工点网页的速度与访问
+    - 单个IP的最大连接数为 30
+    ```
+    iptables -I INPUT -p tcp --dport 80 -m connlimit --connlimit-above 30 -j REJECT
+    ```
+
+    - 单个IP在60秒内只允许最多新建15个连接
+    ```
+    iptables -A INPUT -p tcp --dport 80 -m recent --name BAD_HTTP_ACCESS --update --seconds 60 --hitcount 15 -j REJECT
+    iptables -A INPUT -p tcp --dport 80 -m recent --name BAD_HTTP_ACCESS --set -j ACCEPT
+    ```
+
+    - 允许外部访问本机80端口，且本机初始只允许有10个连接，每秒新增加2个连接，如果访问超过此限制则拒接 （此方式可以限制一些攻击）
+    ```
+    iptables -A INPUT -p tcp --dport 80 -m limit --limit 2/s --limit-burst 10 -j ACCEPT
+    iptables -A OUTPUT -p tcp --sport 80 -j ACCEPT
+    再狠一点，可以定时断开已经建立的连接，让对方只能断断续续的访问~~
+    ```
+4. 数据包简单识别，防止端口复用类的后门或者shell
+假设病毒木马程序通过22，80端口向服务器外传送数据，这种方式发向外发的数据不是我们通过访问网页请求而回应的数据包。我们可以禁止这些没有通过请求回应的数据包。
+    ```
+    iptables -A OUTPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+    iptables -A OUTPUT -p tcp --sport 80 -m state --state ESTABLISHED -j ACCEPT
+    iptables -A OUTPUT -p tcp --sport 443 -m state --state ESTABLISHED -j ACCEP
+    ```
+
+5. 限制访问
+如果对方来势太凶，我们可以限制或者封杀他们的ip段。
+`iptable -t filter -A FORWARD -s 123.4.5.6 -d 123.4.5.7 -j DROP　　/禁止从客户机123.4.5.6访问123.4.5.7上的任何服务`
+封杀123.4.5.6这个IP或者某个ip段
+    ```
+    iptables -I INPUT -s 123.4.5.6 -j DROP
+    iptables -I INPUT -s 123.4.5.1/24 -j DROP
+    ```
+
+
+6. 过滤异常报文
+iptables有一个TCP匹配扩展协议–tcp-flags，功能是过滤TCP中的一些包，比如SYN包，ACK包，FIN包，RST包等等。举个例子，我们知道SYN是建立连接，RST是重置连接，如果这两个同时出现，就知道这样的包是有问题的，应该丢弃。下面的例子是利用–tcp-flags参数，对一些包进行标识过滤，扔掉异常的数据包。
+    ```
+    iptables -A INPUT -p tcp --tcp-flags SYN,FIN,ACK,RST SYN 　#表示 SYN,FIN,ACK,RST的标识都检查，但只匹配SYN标识
+    iptables -A INPUT -p tcp --syn 　　　　　　　　　　　　　　  #匹配SYN标识位
+    iptables -A INPUT -p tcp --tcp-flags ALL FIN,URG,PSH -j DROP 　#检查所有的标识位，匹配到FIN URG PSH的丢弃
+    iptables -A INPUT -p tcp --tcp-flags ALL NONE -j DROP 　　　　 #丢弃没标志位的包
+    iptables -A INPUT -p tcp --tcp-flags ALL SYN,RST,ACK,FIN,URG -j DROP　#匹配到SYN ACK FIN URG的丢弃
+    iptables -A INPUT -p tcp --tcp-flags ALL SYN,FIN,RST -j DROP　　#匹配到SYN ACK FIN RST的丢弃
+    iptables -A INPUT -p tcp --tcp-flags ALL SYN,FIN,PSH -j DROP　　#匹配到SYN FIN PSH的丢弃
+    iptables -A INPUT -p tcp --tcp-flags ALL SYN,FIN,RST,PSH -j DROP　 　　#匹配到SYN FIN RST PSH的丢弃
+    iptables -A INPUT -p tcp --tcp-flags SYN,RST SYN,RST -j DROP　　　　#匹配到 SYN,RST的丢弃
+    iptables -A INPUT -p tcp --tcp-flags SYN,FIN SYN,FIN -j DROP 　　　 #匹配到 SYN,FIN的丢弃
+    ```
+7. 防DDOS攻击
+    ```
+    iptables -A INPUT -p tcp --dport 80 -m limit --limit 20/minute --limit-burst 100 -j ACCEPT
+    　　-m limit: 启用limit扩展
+    　　–limit 20/minute: 允许最多每分钟10个连接
+    　　–limit-burst 100: 当达到100个连接后，才启用上述20/minute限制
+    ```
+    ```
+    丢弃陌生的TCP响应包,防止反弹式攻击
+    iptables -A INPUT -m state --state NEW -p tcp ! --syn -j DROP
+    iptables -A FORWARD -m state --state NEW -p tcp --syn -j DROP
+    ```
+
+
+## 综合分析控阻溢出类攻击
+关于溢出类攻击，我还没有总结出一些很实用的姿势，这里提供一些思路。
+一般来说，溢出攻击成功后，会建立shell通道和网络连接，我们可以配合前面提到的命令，从这两方面入手进行检测和阻隔：
+（1）检测高权限的进程
+（2）检测sh，bash等进程
+（3）检测建立的网络连接
+（4）检查开放的端口
+
+如果我们怀疑某个进程正在是受到溢出攻击后创建的shell进程，我们可以分析这个进程是否有socket连接，**linux中查看指定进程socket连接数的命令为：**
+`ls /proc/<进程pid>/fd -l | grep socket: | wc -l`
+
+我们还可以检测可疑进程开启的管道。**linux下查看进程管道数的命令类似：**
+`ls /proc/<进程pid>/fd -l | grep pipe: | wc -l`
+
+
+## 安装waf
+如果我们想给web目录文件添加自定义waf脚本，其实可以用一条命令解决,以php为例：
+`find /var/www/html -type f -path "*.php" | xargs sed -i "s/<?php/<?php require_once('\/tmp\/waf.php');/g"`
+
+`find /var/www/html -type f -path "*.php" | xargs sed -i "s/<?php/<?php require_once('waf.php');/g"`
+
+
+## scp使用
+**scp是两主机之间传文件的神器，故在此将其完整用法摆在这。**
+### 命令格式：
+    scp [参数] [原路径] [目标路径]
+
+    命令参数：
+    -1 强制scp命令使用协议ssh1
+    -2 强制scp命令使用协议ssh2
+    -4 强制scp命令只使用IPv4寻址
+    -6 强制scp命令只使用IPv6寻址
+    -B 使用批处理模式（传输过程中不询问传输口令或短语）
+    -C 允许压缩。（将-C标志传递给ssh，从而打开压缩功能）
+    -p 留原文件的修改时间，访问时间和访问权限。
+    -q 不显示传输进度条。
+    -r 递归复制整个目录。
+    -v 详细方式显示输出。scp和ssh(1)会显示出整个过程的调试信息。这些信息用于调试连接，验证和配置问题。
+    -c cipher 以cipher将数据传输进行加密，这个选项将直接传递给ssh。
+    -F ssh_config 指定一个替代的ssh配置文件，此参数直接传递给ssh。
+    -i identity_file 从指定文件中读取传输时使用的密钥文件，此参数直接传递给ssh。
+    -l limit 限定用户所能使用的带宽，以Kbit/s为单位。
+    -o ssh_option 如果习惯于使用ssh_config(5)中的参数传递方式，
+    -P port 注意是大写的P, port是指定数据传输用到的端口号
+    -S program 指定加密传输时所使用的程序。此程序必须能够理解ssh(1)的选项。
+
+### 从本地服务器复制到远程服务器
+    复制文件:
+
+    $scp local_file remote_username@remote_ip:remote_folder
+    $scp local_file remote_username@remote_ip:remote_file
+    $scp local_file remote_ip:remote_folder
+    $scp local_file remote_ip:remote_file
+    指定了用户名，命令执行后需要输入用户密码；如果不指定用户名，命令执行后需要输入用户名和密码；
+
+    复制目录:
+
+    $scp -r local_folder remote_username@remote_ip:remote_folder
+    $scp -r local_folder remote_ip:remote_folder
+    第1个指定了用户名，命令执行后需要输入用户密码； 第2个没有指定用户名，命令执行后需要输入用户名和密码；
+注：
+从远程复制到本地的scp命令与上面的命令一样，只要将从本地复制到远程的命令后面2个参数互换顺序就行了。
+
+### 实例1：从远处复制文件到本地目录
+`$scp root@10.6.159.147:/opt/soft/demo.tar /opt/soft/`
+说明： 从10.6.159.147机器上的/opt/soft/的目录中下载demo.tar 文件到本地/opt/soft/目录中
+
+### 实例2：从远处复制到本地
+`$scp -r root@10.6.159.147:/opt/soft/test /opt/soft/`
+说明： 从10.6.159.147机器上的/opt/soft/中下载test目录到本地的/opt/soft/目录来。
+
+### 实例3：上传本地文件到远程机器指定目录
+`$scp /opt/soft/demo.tar root@10.6.159.147:/opt/soft/scptest`
+说明： 复制本地opt/soft/目录下的文件demo.tar 到远程机器10.6.159.147的opt/soft/scptest目录
+
+### 实例4：上传本地目录到远程机器指定目录
+`$scp -r /opt/soft/test root@10.6.159.147:/opt/soft/scptest`
+说明： 上传本地目录 /opt/soft/test到远程机器10.6.159.147上/opt/soft/scptest的目录中
+
+## 快速扫描
+
+    sudo nmap -sP -PI -PT 192.168.1.0/24  扫描该网段内所有IP
+    nmap -sS -sU -T4 -A -v    探测开放端口，服务版本
+
+    massscan -p 22,80,445 192.168.1.0/24 快速扫描网段
+
+    fping -a -q -g ip/掩码 在线主机
+    fping -a -q -g 192.168.92.0/24
+
+
