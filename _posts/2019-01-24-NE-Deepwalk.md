@@ -2,7 +2,7 @@
 layout:     post
 title:      OpenNe源码解析之DeepWalk
 subtitle:   网络嵌入
-date:       2018-01-24
+date:       2019-01-24
 author:     Yunlongs
 catalog: true
 tags:
