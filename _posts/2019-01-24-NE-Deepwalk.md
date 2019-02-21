@@ -8,6 +8,7 @@ catalog: true
 tags:
     - 机器学习
     - OpenNe
+    - 网络嵌入
 ---
 
 >关于DeepWalk算法很好的讲解教程：https://zhuanlan.zhihu.com/p/45167021
