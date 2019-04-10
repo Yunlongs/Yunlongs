@@ -18,7 +18,12 @@ OpenNe代码可以在github上找到
 ## Deepwalk算法伪代码
 ![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/OpenNe/%E5%9B%BE%E7%89%871.jpg)
 
-**参数：** 图，游走窗口大小，嵌入的规模，每个节点游走几次，每次游走长度
+**输入：** 图G(V,E)
+窗口大小w
+嵌入向量维度d
+每个节点游走次数γ
+游走序列长度t
+**输出：** 节点的向量表示矩阵φ
 **第一步：** 初始化节点和向量之间的映射关系
 **第二步：** 建立Hierarchical Softmax模型中的Huffman树。
 **第三步：** 总共对这个图进行γ次游走
@@ -26,6 +31,8 @@ OpenNe代码可以在github上找到
 **第五，六步：** 对于打乱后的每一个节点，以此为根节点，进行长度为t的游走。
 **第七步：** 对于生成的每一段游走序列，使用skipgram算法来生成该节点的向量
 
+在OpenNE中Deepwalk算法的实现过程中，将上述流程做了些调整，加入了随机游走的并行化处理，并将Huffman树的建立放在了获得所有的游走序列后，根据随机游走中的出现过的节点建立Huffman树并进行训练。
+![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/OpenNe/%E5%9B%BE%E7%89%8722.jpg)
 ## Deepwalk源码解读
 ### 1.在__main.py__第110行，初始化图对象
 ![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/OpenNe/%E5%9B%BE%E7%89%872.jpg)
@@ -110,5 +117,5 @@ walk刚开始是一个只有根节点的列表，判断walk中节点的个数是
 第44，45行，剩下每一行，写出当前节点id，与其每一向量分量
 ![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/OpenNe/%E5%9B%BE%E7%89%8721.jpg)
 
-##总结
+## 总结
 OpenNe中的Deepwalk算法与图2中算法的区别在于，图2是每获得一个游走序列就进行学习算法，而OpenNe中，是等待获得所有的游走序列后，才进行学习算法。
