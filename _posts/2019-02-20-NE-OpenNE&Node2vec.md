@@ -16,7 +16,7 @@ OpenNe代码可以在github上找到
 # OpenNe源码解析之Node2vec
 
 ## Node2vec 伪代码
-![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/OpenNe/Node2vec/1.jpg)
+![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/OpenNe/OpenNE-Node2vec/1.jpg)
 **对伪代码逻辑简单的解读：**
 **算法一：**
 
@@ -72,9 +72,9 @@ main(args) #主函数
 **下面进行详细的代码解读：**
 
 ### 1. 在__main__.py第181行调用主函数
-![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/OpenNe/Node2vec/2.jpg)
+![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/OpenNe/OpenNE-Node2vec/2.jpg)
 
-![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/OpenNe/Node2vec/3.jpg)
+![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/OpenNe/OpenNE-Node2vec/3.jpg)
 
 第110行初始化图g
 
@@ -88,21 +88,21 @@ main(args) #主函数
 第11行获取并发数
 
 第21行调用node2vec的Walker类
-![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/OpenNe/Node2vec/4.jpg)
+![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/OpenNe/OpenNE-Node2vec/4.jpg)
 
 ---
 在walker.py中第58行，Walker类的构造函数如下：
-![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/OpenNe/Node2vec/5.jpg)
+![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/OpenNe/OpenNE-Node2vec/5.jpg)
 第60、61、62、64、65行，进行参数赋值
 
 
 ### 3. 在node2vec.py第24行 初始化转移概率
-![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/OpenNe/Node2vec/6.jpg)
+![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/OpenNe/OpenNE-Node2vec/6.jpg)
 
 ----
 
 preprocess_transition_probs函数的申明在walker.py第135行
-![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/OpenNe/Node2vec/7.jpg)
+![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/OpenNe/OpenNE-Node2vec/7.jpg)
 第141行，初始化alias节点列表
 
 第142行，对图G中的每个节点node做如下遍历：
@@ -122,7 +122,7 @@ preprocess_transition_probs函数的申明在walker.py第135行
 对每条边使用get_alias_edge函数进行处理，获得alias方法处理后的边转移数组和alias数组。
 
 get_alias_edge函数的定义如下：
-![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/OpenNe/Node2vec/8.jpg)
+![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/OpenNe/OpenNE-Node2vec/8.jpg)
 第117、118、119行，初始化赋值
 
 第121行，初始化概率列表
@@ -143,10 +143,10 @@ get_alias_edge函数的定义如下：
 
 
 ### 4. 返回到node2vec.py中第25行进行模拟游走
-![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/OpenNe/Node2vec/9.jpg)
+![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/OpenNe/OpenNE-Node2vec/9.jpg)
 
 在walker.py中第96行，simulate_walks函数的定义如下：
-![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/OpenNe/Node2vec/10.jpg)
+![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/OpenNe/OpenNE-Node2vec/10.jpg)
 
 第101行，初始化walks列表，用于存储之后的游走路径
 
@@ -161,7 +161,7 @@ get_alias_edge函数的定义如下：
 ---------第108行，对每个节点进行以此节点为起始节点长度为walk_length的node2vec游走
 
 **其中，在walker.py第66行node2vec游走的具体定义如下：**
-![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/OpenNe/Node2vec/11.jpg)
+![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/OpenNe/OpenNE-Node2vec/11.jpg)
 第71、72行，赋值alias节点和alias边
 
 第76行，将开始节点存入walk中
@@ -179,7 +179,7 @@ get_alias_edge函数的定义如下：
 ———第85、86、87、88、90行，取出倒数第二个节点，生成最后两个节点的一条边，获取使用改进后alias方法获取下一节点，存入此节点
 
 ### 5. 返回到node2vec.py中第27行，进行语料训练
-![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/OpenNe/Node2vec/12.jpg)
+![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/OpenNe/OpenNE-Node2vec/12.jpg)
 
 下面这一段代码就是准备word2vec算法的参数，然后运行算法。
 
