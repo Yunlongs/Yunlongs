@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      Deepwalk算法深度研究
+title:      Deepwalk算法原理深度研究
 subtitle:   网络嵌入
 date:       2019-04-26
 author:     Yunlongs
@@ -10,8 +10,9 @@ tags:
     - Network Embedding
 ---
 
->转载请注明本博客地址
-# Deepwalk算法深度研究
+>转载请注明本博客地址https://yunlongs.cn/2019/04/26/NE-Deepwalk/
+
+# Deepwalk算法原理深度研究
 ## 1. 算法介绍
 在介绍Deepwalk算法之前，这里先引出一个**分类问题**：对于一个网络拓扑结构来说，纵使其各个节点间的关系十分复杂，也可以转化成计算机所能直接处理的数据结构--图，如图1就是将一个带权网络拓扑转化为一个无向图的邻接矩阵的过程。因此给定一个图$\mathrm{G}=(\mathrm{V}, \mathrm{E})$,其中V是图中的顶点，E是顶点之间的边，$E \subseteq(V \times V)$，得到一个标注图$\mathrm{G_L}(\mathrm{V}, \mathrm{E}, \mathrm{X}, \mathrm{Y})$，顶点表示矩阵$X \in R^{|V|} \times S$，$|V |$为顶点的个数，S为顶点向量的维度，标注矩阵$Y \in R^{|V| \times |y|}$,$|y|$为标签集。
 ![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/OpenNe/Deepwalk/1.jpg)
@@ -74,6 +75,6 @@ $\log \operatorname{Pr}\left(\left\{v_{i-w}, \ldots, v_{i-1}, v_{i+1}, \ldots, v
 ## 6. OpenNE中Deepwalk算法实现流程
 在OpenNE中Deepwalk算法的实现过程中，将上述流程做了些调整，加入了随机游走的并行化处理，并将Huffman树的建立放在了获得所有的游走序列后，根据随机游走中的出现过的节点建立Huffman树并进行训练。
 >源码解析见[OpenNe源码解析之DeepWalk
-](https://yunlongs.cn/2019/01/24/NE-Deepwalk/)
+](https://yunlongs.cn/2019/01/24/NE-OpenNE&Deepwalk/)
 
 ![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/OpenNe/Deepwalk/14.jpg)
