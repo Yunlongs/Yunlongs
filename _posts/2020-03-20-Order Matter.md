@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      Order Matters: Semantic-Aware Neural Networks for Binary Code Similarity Detection阅读笔记
+title:      Order Matters：Semantic-Aware Neural Networks for Binary Code Similarity Detection阅读笔记
 subtitle:   二进制代码相似性检测
 date:       2020-03-20
 author:     Yunlongs

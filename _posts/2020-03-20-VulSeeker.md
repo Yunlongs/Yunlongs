@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      VulSeeker: A Semantic Learning Based Vulnerability Seeker for Cross-Platform Binary阅读笔记
+title:      VulSeeker：A Semantic Learning Based Vulnerability Seeker for Cross-Platform Binary阅读笔记
 subtitle:   二进制代码相似性检测
 date:       2020-03-20
 author:     Yunlongs
