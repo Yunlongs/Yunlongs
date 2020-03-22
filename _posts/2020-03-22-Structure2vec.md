@@ -51,9 +51,9 @@ https://github.com/Hanjun-Dai/graphnn.
 
 $$k\left(\chi, \chi^{\prime}\right)=\sum_{s \in \mathcal{S}} \#(s \in \chi) \#\left(s \in \chi^{\prime}\right)$$
 
-其中$S$是可能序列的集合，$\#(s \in \chi)$统计了子序列在$x$中出现的次数。在本例中，特征映射$\phi(\chi)=\left(\#\left(s_{1} \in \chi\right), \#\left(s_{2} \in \chi\right), \ldots\right)^{\top}$相当于一个$\|S\|$维的向量。
+其中$S$是可能序列的集合，$(s \in \chi)$统计了子序列在$x$中出现的次数。在本例中，特征映射$\phi(\chi)=\left(\left(s_{1} \in \chi\right), \left(s_{2} \in \chi\right), \ldots\right)^{\top}$相当于一个$\|S\|$维的向量。
 
-相似的，对于两个图$\mathcal X$和$\mathcal X'$作为输入的praphlet kernel来说，也可以被定义为上式，不过现在$S$是可能子图的集合，$\#(s \in \chi )$为子图在$\mathcal X$中出现的次数。这一类的kernels被称为"bag of structures"(BOS)kernel。
+相似的，对于两个图$\mathcal X$和$\mathcal X'$作为输入的praphlet kernel来说，也可以被定义为上式，不过现在$S$是可能子图的集合，$(s \in \chi )$为子图在$\mathcal X$中出现的次数。这一类的kernels被称为"bag of structures"(BOS)kernel。
 
 **Hilbert Space Embedding of Distributions:** Hilbert空间嵌入是将分布映射到潜在的无限维特征空间中：
 
