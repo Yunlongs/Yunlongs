@@ -1,7 +1,6 @@
 ---
 layout:     post
-title:      Discriminative Embeddings of Latent Variable Models
-for Structured Data(structure2vec)阅读笔记
+title:      Discriminative Embeddings of Latent Variable Models for Structured Data(structure2vec)阅读笔记
 subtitle:   二进制代码相似性检测
 date:       2020-03-21
 author:     Yunlongs
