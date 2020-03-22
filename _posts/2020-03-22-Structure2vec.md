@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      Discriminative Embeddings of Latent Variable Models for Structured Data(structure2vec)阅读笔记
-subtitle:   二进制代码相似性检测
+subtitle:   网络嵌入
 date:       2020-03-21
 author:     Yunlongs
 catalog: true
@@ -48,11 +48,12 @@ https://github.com/Hanjun-Dai/graphnn.
 
 **kernel for structured data:** 每个kernel函数都等同于一些特征映射$\phi(\chi)$，其中kernel函数可以被表达成特征映射间内积的形式，比如$k\left(\chi, \chi^{\prime}\right)=\left\langle\phi(\chi), \phi\left(\chi^{\prime}\right)\right\rangle$。  
 而对于结构化的为输入域，可以使用子结构的数量来设计kernels。例如，spectrum kernel 对于两个序列$\mathcal X$和$\mathcal X'$被定义为：  
+
 $$k\left(\chi, \chi^{\prime}\right)=\sum_{s \in \mathcal{S}} \#(s \in \chi) \#\left(s \in \chi^{\prime}\right)$$
 
-其中$S$是可能序列的集合，$\#(s \in \mathcal X)$统计了子序列在$x$中出现的次数。在本例中，特征映射$\phi(\chi)=\left(\#\left(s_{1} \in \chi\right), \#\left(s_{2} \in \chi\right), \ldots\right)^{\top}$相当于一个$\|S\|$维的向量。
+其中$S$是可能序列的集合，$\#(s \in \chi)$统计了子序列在$x$中出现的次数。在本例中，特征映射$\phi(\chi)=\left(\#\left(s_{1} \in \chi\right), \#\left(s_{2} \in \chi\right), \ldots\right)^{\top}$相当于一个$\|S\|$维的向量。
 
-相似的，对于两个图$\mathcal X$和$\mathcal X'$作为输入的praphlet kernel来说，也可以被定义为上式，不过现在$S$是可能子图的集合，$\#(s \in \mathcal X)$为子图在$\mathcal X$中出现的次数。这一类的kernels被称为"bag of structures"(BOS)kernel。
+相似的，对于两个图$\mathcal X$和$\mathcal X'$作为输入的praphlet kernel来说，也可以被定义为上式，不过现在$S$是可能子图的集合，$\#(s \in \chi )$为子图在$\mathcal X$中出现的次数。这一类的kernels被称为"bag of structures"(BOS)kernel。
 
 **Hilbert Space Embedding of Distributions:** Hilbert空间嵌入是将分布映射到潜在的无限维特征空间中：
 
@@ -81,9 +82,9 @@ $$p\left(\left\lbrace H_{i}\right\rbrace ,\left\lbrace X_{i}\right\rbrace \right
 
 ### 4.Embedding Latent Variable Models
 我们将使用一个特征映射$\phi\left(H_{i}\right)$来对隐变量的后验概率进行嵌入，例如：  
-$$\mu_{i}=\int_{\mathcal{H}} \phi\left(h_{i}\right) p\left(h_{i} |\left\lbrace x_{i}\right\rbrace \right) d h_{i}$$
+$$\mu_{i}=\int_{\mathcal{H}} \phi\left(h_{i}\right) p\left(h_{i} \|\left\lbrace x_{i}\right\rbrace \right) d h_{i}$$
 
-$\phi\left(H_{i}\right)$和$\operatorname{MRF} p\left(H_{i} |\left\lbrace x_{i}\right\rbrace \right)$中参数的精确形式在当前是不固定的， 我们将在稍后使用监督信号来学习它们作为最终判别目标。现在我们假设$\phi\left(H_{i}\right) \in \mathbb{R}^{d}$在一个有限维的特征空间中，并且精确的$d$值将会在之后的实验中通过交叉验证来确定。
+$\phi\left(H_{i}\right)$和$\operatorname{MRF} p\left(H_{i} \|\left\lbrace x_{i}\right\rbrace \right)$中参数的精确形式在当前是不固定的， 我们将在稍后使用监督信号来学习它们作为最终判别目标。现在我们假设$\phi\left(H_{i}\right) \in \mathbb{R}^{d}$在一个有限维的特征空间中，并且精确的$d$值将会在之后的实验中通过交叉验证来确定。
 
 然而对于一般的图任务来说，计算这样的embedding是非常具有挑战性的：其涉及一个我们需要对所有变量（除了$H_i$）进行积分从而进而推导的graphical model。例如：
 
@@ -146,7 +147,7 @@ Loopy belief propagation是另一个变分推断方法，其本质上通过考�
 和mean field例子相似，上式也暗示着消息$m_{ij}(h_j)$和marginals $q_i(h_i)$是来自邻居消息的函数，例如：
 ![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/Similary_Detection/47.png)
 
-在假设对于每个消息$\tilde{\nu}_{i j}=\int \phi\left(h_{j}\right) m_{i j}\left(h_{j}\right) d h_{j}$和每个marginal$\widetilde{\mu}_{i}=\int \phi\left(h_{i}\right) q_{i}\left(h_{i}\right) d h_{i}$都存在一个单射embedding，同样利用单射的属性，可以将这些消息和marginals从embedding 的视角来表达：
+在假设对于每个消息$\tilde{\nu}_ {i j}=\int \phi\left(h_{j}\right) m_{i j}\left(h_{j}\right) d h_{j}$和每个marginal$\widetilde{\mu}_ {i}=\int \phi\left(h_{i}\right) q_{i}\left(h_{i}\right) d h_{i}$都存在一个单射embedding，同样利用单射的属性，可以将这些消息和marginals从embedding 的视角来表达：
 ![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/Similary_Detection/48.png)
 
 和mean field 的例子一样，我们对loopy BP EMBEDDING使用参数化，例如神经网络，假设$\widetilde{\nu}_ {i j} \in \mathbb{R}^{d}, \widetilde{\mu}_{i} \in \mathbb{R}^{d}$：
