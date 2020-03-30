@@ -71,7 +71,7 @@ VulSeeker的**目标** 是：给定目标二进制程序，判定其是否具有
 在获得了函数内所有basic block节点的嵌入向量后，将它们全部累加后乘以$p \times p$维参数矩阵$W_2$后得到$p$维的嵌入向量$\widetilde{\mu}$。其计算的具体公式如下：
 $$\widetilde{\mu}=W_{2}\left(\Sigma_{i \in V} \widetilde{\mu}_{i}^{(T)}\right)$$
 
-图2(b)展示了在第t-层迭代中每个节点i的嵌入向量$\widetilde{\mu}_{i}^{(t)}$的生成过程示意图。这个转换过程的输入有三个不同的部分组成：节点i的初始向量$x_i$（图中的虚线箭头）、通过控制依赖指向节点i的之前的节点嵌入向量之和（由$C(i)$表示）、和通过数据依赖只想节点i的先前节点的嵌入向量之和（由$D(i)$表示）。
+图2(b)展示了在第t-层迭代中每个节点i的嵌入向量$\widetilde{\mu}_{i}^{(t)}$的生成过程示意图。这个转换过程的输入有三个不同的部分组成：节点i的初始向量$x_i$（图中的虚线箭头）、通过控制依赖指向节点i的之前的节点嵌入向量之和（由$C(i)$表示）、和通过数据依赖指向节点i的先前节点的嵌入向量之和（由$D(i)$表示）。
 
 其中节点i的嵌入向量通过如下公式计算：
 $$\widetilde{\mu}_{i}^{(t)}=\tanh \left(W_{1} x_{i}+\sigma_{c}\left(\Sigma_{j \in C(i)} \widetilde{\mu}_{j}^{(t-1)}\right)+\sigma_{d}\left(\Sigma_{j \in D(i)} \widetilde{\mu}_{j}^{(t-1)}\right)\right)$$
