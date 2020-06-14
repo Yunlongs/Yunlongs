@@ -73,21 +73,77 @@ Baseline 数据集的组成：从Dataset I总随机取样1w个函数，但是要
 
 从baseline 数据集上随机选取1000个函数加入到Query集合中baseline 数据集剩下的都作为codebase。然后用这1000个Query set作为query在target 中进行寻找。
 
->在实验过程中，发现，若是将所有得语料当作codebase来训练得话，内存会爆炸，所以应该是1000个函数除去query剩下得作为codebase。
+>~~在实验过程中，发现，若是将所有得语料当作codebase来训练得话，内存会爆炸，所以应该是1000个函数除去query剩下得作为codebase。~~
+错了！对于那些不能scalable的方法，我们才取1w个作为baseline。对于本方法，应当是除了query外所有的函数全部进行训练。所以从下面的实验结果可以看出来，在同样的数据集规模下，该方法在准确率上的提升并没有那么大！
 
 需要记录下，每个query的Top-K召回率，然后取平均。
 
 #### 实验记录
-Baseline的数据集按照上面的设置进行生成，但是这里只取了节点个数小于100的函数来生成数据集。
+Baseline的数据集按照上面的设置进行生成，但是这里只取了节点个数小于100和大于3的函数来生成数据集。
 
-结果最后的实验很不理想，下面是记录的实验结果：
-这里举一个例子进行分析
-- 我们选用的query函数为“openssl-101a_x86_gcc_O2_openssl-level_find_node”
-- 在训练集中与query对应的函数为“openssl-101a_arm_clang_O0_openssl-level_find_node”
-- 但是通过LSH返回的函数为“openssl-101f_mips_clang_O0_openssl-DES_ede3_ofb64_encrypt”
+**这里展示的是跨编译器和优化选项的结果，数据集均是x86下openssl的**
+首先，我们将query中随机抽选10个来进行search，其中有3个返回了正确的结果，并且均是top3。
+```
+for the 99st query:  openssl-101a_x86_clang_O3_openssl-BN_GF2m_mod_mul  accuracy: 0.01
+funcname: openssl-101a_x86_clang_O3_openssl-BN_GF2m_mod_exp  distance: 0.0002481410293551007
+funcname: openssl-101a_x86_gcc_O1_openssl-BN_GF2m_mod_mul  distance: 0.014597954434989562
 
-这三个函数所经过VLAD后的编码特征如下所示：
-![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/Similary_Detection/99.png)
-可以看到，第一行和第二行分别为我们的query和target，但是特征编码的差异却很大。
-下面计算出了query和这两个函数的欧几里得距离，但奇怪的是返回的距离比较大的"openssl-101f_mips_clang_O0_openssl-DES_ede3_ofb64_encrypt”这个函数，正确的应该是要返回训练集中的target函数。
-![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/Similary_Detection/100.png)
+for the 99st query:  openssl-101a_x86_clang_O1_openssl-OCSP_archive_cutoff_new  accuracy: 0.01
+funcname: openssl-101a_x86_clang_O3_openssl-PEM_ASN1_read_bio  distance: 0.029056688820376143
+funcname: openssl-101a_x86_clang_O2_openssl-d2i_X509_AUX  distance: 0.02962471064099212
+funcname: openssl-101a_x86_gcc_O1_openssl-OCSP_archive_cutoff_new  distance: 0.030663739619894628
+
+for the 99st query:  openssl-101a_x86_clang_O1_openssl-print_error  accuracy: 0.01
+funcname: openssl-101a_x86_clang_O2_openssl-print_error  distance: 0.0
+```
+>因为我们对于每个query，在进行的sarch数据库中可能只有一个正确的匹配,而且上面的结果平别进行了跨平台、编译器，初步来看，Genius的确能起到一些作用。
+
+在此测试集上的结果
+![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/Similary_Detection/101.png)
+```
+top 1  recall: 8.62189576775096
+top 25  recall: 15.937390696047565
+top 50  recall: 17.651276670164393
+top 75  recall: 19.3389296956978
+top 100  recall: 20.36201469045121
+top 125  recall: 21.09129066107031
+top 150  recall: 21.78384050367262
+top 175  recall: 22.3539699195523
+top 200  recall: 23.088492479888078
+top 1000  recall: 29.375655823714595
+total time: 669.6987557411194
+
+```
+
+针对openssl的所有跨架构、编译器、优化选项的实验结果：
+![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/Similary_Detection/102.png)
+```
+top 1  recall: 5.340048209366395
+top 25  recall: 9.201224911452186
+top 50  recall: 10.070961235733963
+top 75  recall: 11.056793585202671
+top 100  recall: 12.062303227075951
+top 125  recall: 12.342950609996063
+top 150  recall: 12.662460645415191
+top 175  recall: 13.044692050373866
+top 200  recall: 13.469967532467528
+total time: 281.4467844963074
+
+Process finished with exit code 0
+
+```
+
+下面是使用自己修正过的第三种相似性计算方法（包含了节点比例）的实验结果：
+![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/Similary_Detection/103.png)
+```
+top 1  recall: 5.6718120479588405
+top 25  recall: 12.158997136061355
+top 50  recall: 15.12729964564827
+top 75  recall: 17.328285034707054
+top 100  recall: 19.057205960875685
+top 125  recall: 20.300228144264842
+top 150  recall: 21.62807630697539
+top 175  recall: 22.742585311392652
+top 200  recall: 23.52555701179555
+total time: 1181.8974475860596
+```
