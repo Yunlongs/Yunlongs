@@ -96,7 +96,7 @@ funcname: openssl-101a_x86_gcc_O1_openssl-OCSP_archive_cutoff_new  distance: 0.0
 for the 99st query:  openssl-101a_x86_clang_O1_openssl-print_error  accuracy: 0.01
 funcname: openssl-101a_x86_clang_O2_openssl-print_error  distance: 0.0
 ```
->因为我们对于每个query，在进行的sarch数据库中可能只有一个正确的匹配,而且上面的结果平别进行了跨平台、编译器，初步来看，Genius的确能起到一些作用。
+>因为我们对于每个query，在进行的search数据库中可能只有一个正确的匹配,而且上面的结果平别进行了跨平台、编译器，初步来看，Genius的确能起到一些作用。
 
 在此测试集上的结果
 ![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/Similary_Detection/101.png)
