@@ -72,9 +72,12 @@ VulSeeker的**目标** 是：给定目标二进制程序，判定其是否具有
 $$\widetilde{\mu}=W_{2}\left(\Sigma_{i \in V} \widetilde{\mu}_{i}^{(T)}\right)$$
 
 图2(b)展示了在第t-层迭代中每个节点i的嵌入向量$\widetilde{\mu}_{i}^{(t)}$的生成过程示意图。这个转换过程的输入有三个不同的部分组成：节点i的初始向量$x_i$（图中的虚线箭头）、通过控制依赖指向节点i的之前的节点嵌入向量之和（由$C(i)$表示）、和通过数据依赖指向节点i的先前节点的嵌入向量之和（由$D(i)$表示）。
+>这里也许值得注意下，在实现的过程中structure2vec的邻居使用的是入度邻居，那为什么不能用出度邻居呢？
+
+
 
 其中节点i的嵌入向量通过如下公式计算：
-$$\widetilde{\mu}_{i}^{(t)}=\tanh \left(W_{1} x_{i}+\sigma_{c}\left(\Sigma_{j \in C(i)} \widetilde{\mu}_{j}^{(t-1)}\right)+\sigma_{d}\left(\Sigma_{j \in D(i)} \widetilde{\mu}_{j}^{(t-1)}\right)\right)$$
+$$\widetilde{\mu}_ {i}^{(t)}=\tanh \left(W_{1} x_{i}+\sigma_{c}\left(\Sigma_{j \in C(i)} \widetilde{\mu}_ {j}^{(t-1)}\right)+\sigma_{d}\left(\Sigma_{j \in D(i)} \widetilde{\mu}_{j}^{(t-1)}\right)\right)$$
 其中$W_1$为$d \times p$维参数矩阵，$\sigma_c和\sigma_d$是两个n层全连接网络来计算具有更强表征能力的嵌入向量，其网络结构如下：
 ![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/Similary_Detection/39.png)
 其中n为每个节点的embedding深度，$P_i和Q_i$为$p \times p$维的参数矩阵。

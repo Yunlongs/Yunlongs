@@ -76,3 +76,83 @@ step 1900: Loss: 1.438, Accuracy: 80.953%
 step 2000: Loss: 1.443, Accuracy: 80.815%
 ----------------------------
 ```
+
+
+这里选了一些的实验结果出来，明显好多了
+```
+frist query hwcrhk_log_message
+hwcrhk_log_message
+hwcrhk_log_message
+hwcrhk_log_message
+hwcrhk_log_message
+hwcrhk_log_message
+ec_GFp_simple_point_set_affine_coordinates
+ec_GFp_simple_point_set_affine_coordinates
+NCONF_load_fp
+EVP_PKEY_get1_DH
+EC_POINT_set_affine_coordinates_GF2m
+----
+hwcrhk_log_message
+hwcrhk_log_message
+UI_get_result_minsize
+UI_get_result_minsize
+UI_get_result_minsize
+UI_get_result_minsize
+cms_encode_Receipt
+hwcrhk_log_message
+hwcrhk_log_message
+hwcrhk_log_message
+-------
+-------
+frist query cb_leak_LHASH_DOALL_ARG
+cb_leak_LHASH_DOALL_ARG
+cb_leak_LHASH_DOALL_ARG
+cb_leak_LHASH_DOALL_ARG
+cb_leak_LHASH_DOALL_ARG
+cb_leak_LHASH_DOALL_ARG
+cb_leak_LHASH_DOALL_ARG
+cb_leak_LHASH_DOALL_ARG
+cb_leak_LHASH_DOALL_ARG
+OCSP_crl_reason_str
+EVP_MD_CTX_clear_flags
+----
+EVP_seed_cfb128
+EVP_aes_256_ctr
+TLSv1_2_server_method
+EVP_aes_192_ccm
+EVP_mdc2
+X509_get_default_cert_area
+TLSv1_2_server_method
+EVP_sha512
+SSL_cache_hit
+EVP_aes_256_cbc
+```
+
+```
+top1 recall: 0.681
+top10 recall: 0.29196666666666704
+top25 recall: 0.17789944444444455
+top50 recall: 0.13288111953694395
+top75 recall: 0.154174651644963
+top100 recall: 0.17020104469285516
+top125 recall: 0.18606709198893773
+top150 recall: 0.20042879592489513
+top175 recall: 0.2137407060267548
+top200 recall: 0.2256441322367937
+```
+
+
+感觉这实验还是比较离谱，所以，这里**重新说明一下论文中的Baseline设置：**
+1. 将所有的数据集按照811的比例划分为训练集、验证集、测试集，并保证任何两个集合之间没有相同原代码的函数
+2. 对于每个训练集中的函数，随机选一个正样本和负样本，组成训练集样本对
+
+**训练细节：**
+1. Adam learning rate为0.0001
+2. 100 epochs
+3. mini batch 10
+4. embedding size 64,embedding depth 2,T =5
+5. 保存在验证集上AUC最高的模型
+
+**Baseline evalute accuracy**:
+1. 测试集取样的方式和训练集一样
+2. 测试ROC曲线
