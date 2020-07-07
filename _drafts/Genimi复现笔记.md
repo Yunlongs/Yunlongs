@@ -156,3 +156,11 @@ top200 recall: 0.2256441322367937
 **Baseline evalute accuracy**:
 1. 测试集取样的方式和训练集一样
 2. 测试ROC曲线
+
+![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/Similary_Detection/120.png)
+![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/Similary_Detection/121.png)
+![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/Similary_Detection/122.png)
+
+![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/Similary_Detection/123.png)
+
+

@@ -100,5 +100,6 @@ $$\widehat{y}=\cos (\widetilde{\mu}, \widetilde{v})=\frac{\tilde{\mu} \cdot \til
 ![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/Similary_Detection/40.png)
 
 ![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/Similary_Detection/41.png)
+>也就是说在此实验设定下，VulSeeker的AUC值为88.49%，准确率为81.3%；而Genimi的AUC值为80.26%，准确率为69.16%。造成这样的原因是因为，在Genimi文章中的实验设置过于简单，在这样简单的设定下Genimi可以达到97%AUC,Vulseeker可以达到99%AUC.
 
 **效率：** Genimi对一个二进制程序进行搜索已知漏洞所需要的时间为0.15s，而VulSeeker需要0.2秒
