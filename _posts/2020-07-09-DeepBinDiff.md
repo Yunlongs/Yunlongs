@@ -11,3 +11,9 @@ tags:
 ---
 
 ## DEEPBINDIFF: Learning Program-Wide Code Representations for Binary Diffing
+>https://github.com/deepbindiff/DeepBinDiff
+
+|期刊/会议： |NDSS2020 |
+| ---|---|
+|发表时间：|2020年2月|
+|发表机构：|Cornell University|
