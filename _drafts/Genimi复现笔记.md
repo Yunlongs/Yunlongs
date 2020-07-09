@@ -49,12 +49,10 @@ openssl-1.0.1a和openssl-1.0.1f，在x86,arm,mips架构下，用编译器clang�
 **Baseline evalute accuracy**:
 1. 测试集取样的方式和训练集一样
 2. 测试ROC曲线
-
-![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/Similary_Detection/120.png)
-![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/Similary_Detection/121.png)
-![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/Similary_Detection/122.png)
-
-![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/Similary_Detection/123.png)
+![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/Similary_Detection/124.png)
+![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/Similary_Detection/125.png)
+![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/Similary_Detection/126.png)
+![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/Similary_Detection/127.png)
 
 
 ## Experiment 3
