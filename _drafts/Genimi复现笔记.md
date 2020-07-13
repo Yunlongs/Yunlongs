@@ -66,17 +66,63 @@ openssl-1.0.1a和openssl-1.0.1f，在x86,arm,mips架构下，用编译器clang�
 
 
 ## Experiment 3
+### 3.1 实验设置
+添加最小阈值`min_nodes_threshold=3，max_nodes=5`
+```
+version = ["openssl-101a","openssl-101f"]
+arch = ["arm","x86","mips"]
+compiler = ["gcc","clang"]
+optimizer = ["O0","O1","O2","O3"]
+
+### some details about dataset generation
+max_nodes = 500
+min_nodes_threshold = 3
+Buffer_Size = 1000
+mini_batch = 10
+
+### some params about training the network
+learning_rate  = 0.0001
+epochs  = 100
+step_per_epoch = 30000
+valid_step_pre_epoch = 3800
+test_step_pre_epoch = 38000
+T = 5
+embedding_size = 64
+embedding_depth = 2
+```
 这里对cfg中最小的节点设了一个阈值，min_nodes_threshold>=3。
 | |Training|Validation|Testing|total|
 |--|--|--|--|--|
-|arm| | | | 26061|
-|x86| | | | 27518|
-|mips| | | | 27487|
-|total(func)| 3287| 412|410 | |
+|arm| | | | 52245|
+|x86| | | | 54952|
+|mips| | | | 54895|
+|total(func)| 3293| 413|411 | |
 
 ## Experiment 4
 ### 4.1 实验设置
-min_nodes_threshold>=10
+更改`min_nodes_threshold=10`
+```
+version = ["openssl-101a","openssl-101f"]
+arch = ["arm","x86","mips"]
+compiler = ["gcc","clang"]
+optimizer = ["O0","O1","O2","O3"]
+
+### some details about dataset generation
+max_nodes = 500
+min_nodes_threshold = 3
+Buffer_Size = 1000
+mini_batch = 10
+
+### some params about training the network
+learning_rate  = 0.0001
+epochs  = 100
+step_per_epoch = 30000
+valid_step_pre_epoch = 3800
+test_step_pre_epoch = 38000
+T = 5
+embedding_size = 64
+embedding_depth = 2
+```
 
 
 ### 4.2 实验结果
