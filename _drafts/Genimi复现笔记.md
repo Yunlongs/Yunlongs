@@ -13,6 +13,7 @@ openssl-1.0.1a和openssl-1.0.1f，在x86,arm,mips架构下，用编译器clang�
 test step 1900: Loss: 0.946, Accuracy: 88.844%, AUC: 0.950
 
 ## Experiment 1
+### 1.1 实验设置
 openssl-1.0.1a和openssl-1.0.1f，在x86,arm,mips架构下，用编译器clang和gcc，优化选项O0-O3编译。
 在原论文中**只是用了gcc编译**，所以本次baseline评估使用的数据集规模如下：
 | |Training|Validation|Testing|total|
@@ -32,14 +33,15 @@ openssl-1.0.1a和openssl-1.0.1f，在x86,arm,mips架构下，用编译器clang�
 ## Experiment 2
 >~~这里先说明下，对本实验结果并不如论文中所述的猜测：在对数据集的采样上，我们是根据函数名来进行采样，这样就意味着由相同源代码函数编译得到的不同的二进制函数仅会在一个划分过的数据集上，所以训练的时候模型是不知道任何关于测试集函数的内容的，这样训练起来会更难一些。然而有可能他们在实现的过程中，进行的是随机采样，所以测试集的中会有一部分函数和训练集中的函数其实是同一函数名。~~ 后来发现自己在对neighbor 的embed layer多加了一个relu，并设置min_nodes_threshold后效果提升巨大。
 
-这里**再加上clang的数据集进行训练**
+### 实验设置
+
+在实验1的基础上，这里**再加上clang的数据集进行训练**
 | |Training|Validation|Testing|total|
 |--|--|--|--|--|
 |arm| | | | 90300|
 |x86| | | | 90344|
 |mips| | | | 90240|
 |total(func)| 5346| 669|668 | |
-
 
 
 
@@ -71,3 +73,14 @@ openssl-1.0.1a和openssl-1.0.1f，在x86,arm,mips架构下，用编译器clang�
 |x86| | | | 27518|
 |mips| | | | 27487|
 |total(func)| 3287| 412|410 | |
+
+## Experiment 4
+### 4.1 实验设置
+min_nodes_threshold>=10
+
+
+### 4.2 实验结果
+![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/Similary_Detection/experiment_result/Figure_6.png)
+![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/Similary_Detection/experiment_result/Figure_7.png)
+![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/Similary_Detection/experiment_result/Figure_8.png)
+![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/Similary_Detection/experiment_result/Figure_5.png)
