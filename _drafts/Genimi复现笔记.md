@@ -65,3 +65,17 @@ openssl-1.0.1a和openssl-1.0.1f，在x86,arm,mips架构下，用编译器clang�
 |x86| | | | 27518|
 |mips| | | | 27487|
 |total(func)| 3287| 412|410 | |
+
+
+
+for three arch: [12525, 13203, 13187]
+train dataset's num =1950 ,valid dataset's num=245 , test dataset's num =243
+
+
+max_nodes = 500
+min_nodes_threshold = 10
+Buffer_Size = 1000
+mini_batch = 10
+
+
+test step 1900: Loss: 0.827, Accuracy: 91.116%, AUC: 0.969
