@@ -12,6 +12,7 @@ tags:
 
 
 ## A Cross-Architecture Instruction Embedding Modelfor Natural Language Processing-Inspired Binary Code Analysis
+
 |期刊/会议： |NDSS19 BAR workshop|
 | ---|---|
 |发表时间：|2019年|
@@ -32,11 +33,13 @@ tags:
 **单架构部分**利用相同架构下输入指令序列的上下文共现信息；**多架构部分**从不同架构的指令序列对中学习语义等价的信息。
 
 **联合目标函数**：
+
 $$J=\gamma \sum_{i=1}^{N} J\left(\operatorname{Mono}_{a_{i}}\right)+\beta \sum_{i=1}^{N-1} \sum_{j=i+1}^{N} J\left(\text { Multi } <a_{i}, a_{j}>\right)$$
 
 在上式中，每个单架构成分$Mono_{a_i}$ 为针对架构$a_i$来捕捉其指令的聚类属性。J为目标函数。多架构成分$Multi<a_i,a_j>$被使用来学习多架构间的语义关系。超参数r和B用来平衡这两个之间的影响。
 
 例如，如果只考虑两个结构的目标函数的话，x86和arm，上面的联合目标函数就为
+
 $$J=\gamma\left(J\left(\operatorname{Mono}_ {x 86}\right)+J\left(\operatorname{Mono}_{A R M}\right)\right)+\beta J(\operatorname{Multi} <x 86, A R M>)$$
 
 >此工作中的指令序列是一个基本块，因为我们把指令看作单词，基本块看作句子。这里不采用函数为基本单位的原因是，函数中的指令并不是顺序执行的。
@@ -51,6 +54,7 @@ $$J=\gamma\left(J\left(\operatorname{Mono}_ {x 86}\right)+J\left(\operatorname{M
 在处理单架构指令嵌入的目标函数时，作者利用了CBOW的训练方法，这里设当前指令$e_t$的上下文为其前n个和后n个指令， 那么根据CBOW模型， 我们所需要的目标函数就为
 
 $$J=\frac{1}{T} \sum_{t=1}^{T} \log P\left(e_{t} \mid e_{t-n}, \ldots e_{t-1}, e_{t+1}, \ldots, e_{t+n}\right)$$
+
 其中$T$为指令序列的长度，n为滑动窗口的大小。
 
 #### 多架构部分目标函数
