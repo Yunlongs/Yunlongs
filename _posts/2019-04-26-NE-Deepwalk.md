@@ -37,7 +37,7 @@ Deepwalk算法要做的就是学习出顶点的向量表示$X_{E} \in R^{|V| \ti
 
 $$W_{1}^{n}=\left(w_{0}, w_{1}, \ldots, w_{n}\right)$$
 
-$w_i$代表着此句子中的第i个单词，我们的目标是使在给定前n-1个词的情况下，出现$w_n$的概率最大，即最大化参数使得$\operatorname{Pr}\left(w_{n} | w_{0}, w_{1}, \cdots, w_{n-1}\right)$取最大值。
+$w_i$代表着此句子中的第i个单词，我们的目标是使在给定前n-1个词的情况下，出现$w_n$的概率最大，即最大化参数使得$\operatorname{Pr}\left(w_{n} \| w_{0}, w_{1}, \cdots, w_{n-1}\right)$取最大值。
 
 将此思想推广到网络拓扑中，可以得到网络嵌入的雏形：给定一条由网络节点组成的随机游走序列
 
@@ -45,7 +45,7 @@ $$V_{1}^{N}=\left(v_{0}, v_{1}, \ldots, v_{n}\right)$$
 
 这条随机游走序列看作为一种特殊语言中的一个句子，将这条特殊的文本按照正常语言来处理，此时的目标是在给定游走序列中前n-1个节点的情况下，使第n个节点为$v_i$的概率达到最大化。
 
-$$\operatorname{Pr}\left(v_{i} |\left(v_{1}, v_{2}, \ldots, v_{i-1}\right)\right)$$
+$$\operatorname{Pr}\left(v_{i} \|\left(v_{1}, v_{2}, \ldots, v_{i-1}\right)\right)$$
 
 
 但是我们的目标不仅仅是会哦的这些节点同时存在时的概率分布，我们还要获得他们的潜在表示，这里将引入映射函数$\Phi : v \in V \rightarrow R^{|V| \times d}$，它是一个|V | × d维的矩阵，$\Phi\left(v_{i}\right)$代表的是节点$v_i$所在图中所具有的潜在社会表示。
@@ -54,12 +54,12 @@ $$\operatorname{Pr}\left(v_{i} |\left(v_{1}, v_{2}, \ldots, v_{i-1}\right)\right
 
 因此，当使用节点的映射代替节点时，我们的优化目标就变成了
 
-$$\operatorname{Pr}\left(v_{i} |\left(\Phi\left(v_{1}\right), \Phi\left(v_{2}\right), \ldots, \Phi\left(v_{i-1}\right)\right)\right)$$
+$$\operatorname{Pr}\left(v_{i} \|\left(\Phi\left(v_{1}\right), \Phi\left(v_{2}\right), \ldots, \Phi\left(v_{i-1}\right)\right)\right)$$
 
 但是从上式中也可以看出一个问题，为了得到$v_i$的优化目标函数，需要之前i-1个点的潜在社会表示，这就使得当游走序列越来越长时，计算出目标函数几乎是不可行的。为了解决这个问题，**Deepwalk采用了词嵌入技术中的Skip-gram方法思想：**
 
 （1）不再使用上下文来预测一个缺失词，而是使用缺失词来预测上下文。（2）上下文由目标词的左右两侧组成，不仅仅是一边。（3）最大化词在上下文中出现的概率，并且不需要知道对于给定词的相对偏移位置。新的优化目标总结如下：
-$$\log \operatorname{Pr}\left(\left\{v_{i-w}, \ldots, v_{i-1}, v_{i+1}, \ldots, v_{i+w}\right\} | \Phi\left(v_{i}\right)\right)$$
+$$\log \operatorname{Pr}\left(\left\{v_{i-w}, \ldots, v_{i-1}, v_{i+1}, \ldots, v_{i+w}\right\} \| \Phi\left(v_{i}\right)\right)$$
 
 当解决了这个优化问题时，我们将获得在局部节点之间存在相似性的潜在社会表示，即当两个节点有相同的邻居节点时，这两个节点将获得相同的表示，并且这性质还可以进行推广到更大的范围中。
 
