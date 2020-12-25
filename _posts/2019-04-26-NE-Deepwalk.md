@@ -48,7 +48,7 @@ $$V_{1}^{N}=\left(v_{0}, v_{1}, \ldots, v_{n}\right)$$
 $$\operatorname{Pr}\left(v_{i} \|\left(v_{1}, v_{2}, \ldots, v_{i-1}\right)\right)$$
 
 
-但是我们的目标不仅仅是会哦的这些节点同时存在时的概率分布，我们还要获得他们的潜在表示，这里将引入映射函数$\Phi : v \in V \rightarrow R^{|V| \times d}$，它是一个|V | × d维的矩阵，$\Phi\left(v_{i}\right)$代表的是节点$v_i$所在图中所具有的潜在社会表示。
+但是我们的目标不仅仅是会哦的这些节点同时存在时的概率分布，我们还要获得他们的潜在表示，这里将引入映射函数$\Phi : v \in V \rightarrow R^{\|V\| \times d}$，它是一个\|V \| × d维的矩阵，$\Phi\left(v_{i}\right)$代表的是节点$v_i$所在图中所具有的潜在社会表示。
 
 ![](https://yunlongs-1253041399.cos.ap-chengdu.myqcloud.com/image/OpenNe/Deepwalk/4.jpg)
 
